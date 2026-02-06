@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TUF Goes to Romania - LAUNCHub Ventures</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script defer src="https://cloud.umami.is/script.js" data-website-id="4219c3d1-941e-4cc7-8c15-b157cdd9d935"></script>
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f8f9fa;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 24px;
+            background: #ffffff;
+            border-bottom: 1px solid #eee;
+        }
+        .logo-container { display: flex; align-items: center; gap: 12px; }
+        .tuf-logo {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #8B6B9B;
+            box-shadow: 0 2px 8px rgba(139, 107, 155, 0.3);
+        }
+        .logo-text { font-size: 24px; font-weight: 700; color: #1a1a2e; letter-spacing: -0.5px; }
+        .logo-text span { color: #8B6B9B; }
+        .subtitle { font-size: 14px; color: #666; font-weight: 400; }
+        .powered-by {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: #666;
+        }
+        .powered-by img {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #8B6B9B 0%, #6B4B7B 100%);
+            padding: 40px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 400px;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath fill='%23ffffff' fill-opacity='0.08' d='M50 10 L90 90 L10 90 Z'/%3E%3C/svg%3E") no-repeat center;
+            background-size: contain;
+            opacity: 0.3;
+        }
+        .hero-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        .hero-top {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 16px;
+        }
+        .hero-logo {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255,255,255,0.9);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+        .hero-titles {
+            flex: 1;
+        }
+        .hero-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.7);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .hero-title {
+            font-size: clamp(28px, 4vw, 36px);
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 4px;
+        }
+        .hero-subtitle {
+            font-size: 16px;
+            color: rgba(255,255,255,0.8);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            max-width: 900px;
+            margin-top: 24px;
+        }
+        .stat-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border-left: 4px solid #8B6B9B;
+        }
+        .stat-value {
+            font-size: clamp(28px, 4vw, 42px);
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* Tab Navigation */
+        .tab-container {
+            background: #ffffff;
+            border-bottom: 1px solid #eee;
+            padding: 0 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .tab {
+            padding: 16px 24px;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 500;
+            color: #666;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: -1px;
+        }
+        .tab:hover {
+            color: #8B6B9B;
+            background: #f8f5fa;
+        }
+        .tab:focus-visible {
+            outline: 2px solid #8B6B9B;
+            outline-offset: 2px;
+        }
+        .tab.active {
+            color: #8B6B9B;
+            background: #f8f5fa;
+            font-weight: 600;
+        }
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: #8B6B9B;
+            border-radius: 3px 3px 0 0;
+        }
+        .tab-count {
+            background: #f0ebf3;
+            color: #8B6B9B;
+            font-size: 12px;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* Grid Controls */
+        .grid-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .grid-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a2e;
+        }
+        .search-box {
+            padding: 10px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            width: 280px;
+            max-width: 100%;
+            font-family: inherit;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        .search-box:focus {
+            outline: none;
+            border-color: #8B6B9B;
+            box-shadow: 0 0 0 3px rgba(139, 107, 155, 0.1);
+        }
+
+        /* Grid Container */
+        .grid-wrapper {
+            background: #ffffff;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            border: 1px solid #eee;
+        }
+        #dataGrid {
+            height: 600px;
+            width: 100%;
+        }
+
+        /* ag-Grid Theme */
+        .ag-theme-alpine {
+            --ag-header-background-color: #fafafa;
+            --ag-header-foreground-color: #333;
+            --ag-row-hover-color: #f8f5fa;
+            --ag-selected-row-background-color: #f0ebf3;
+            --ag-font-family: 'Inter', sans-serif;
+            --ag-font-size: 14px;
+            --ag-borders: none;
+        }
+        .ag-theme-alpine .ag-header-cell {
+            font-weight: 600;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #666;
+        }
+        .ag-theme-alpine .ag-cell {
+            display: flex;
+            align-items: center;
+        }
+        .ag-theme-alpine .ag-row {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        /* Score Badges */
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .score-high {
+            background: #166534;
+            color: #ffffff;
+        }
+        .score-medium {
+            background: #a16207;
+            color: #ffffff;
+        }
+        .score-low {
+            background: #b91c1c;
+            color: #ffffff;
+        }
+        .score-na {
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Links */
+        .link-cell a {
+            color: #8B6B9B;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+        .link-cell a:hover {
+            color: #6B4B7B;
+            text-decoration: underline;
+        }
+
+        /* Footer */
+        .footer {
+            background: #ffffff;
+            border-top: 1px solid #eee;
+            padding: 24px;
+            text-align: center;
+        }
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .footer-text {
+            font-size: 13px;
+            color: #666;
+        }
+        .footer-text a {
+            color: #8B6B9B;
+            text-decoration: none;
+        }
+        .footer-text a:hover {
+            text-decoration: underline;
+        }
+        .tuf-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #8B6B9B 0%, #6B4B7B 100%);
+            color: #ffffff;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+        .tuf-badge img {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+            }
+            .hero {
+                padding: 24px 16px;
+            }
+            .hero-top {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .hero-logo {
+                width: 56px;
+                height: 56px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            .stat-card {
+                padding: 16px;
+            }
+            .stat-value {
+                font-size: 28px;
+            }
+            .tab-container {
+                padding: 0 16px;
+                overflow-x: auto;
+            }
+            .tabs {
+                min-width: max-content;
+            }
+            .tab {
+                padding: 12px 16px;
+                font-size: 13px;
+            }
+            .main-content {
+                padding: 16px;
+            }
+            .grid-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .search-box {
+                width: 100%;
+            }
+            #dataGrid {
+                height: 500px;
+            }
+        }
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            .stat-value {
+                font-size: 24px;
+            }
+            .stat-label {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo-container">
+            <img src="tuf-logo.png" alt="Todor Ultra Fast logo" class="tuf-logo">
+            <div>
+                <div class="logo-text">TUF Goes to <span>Romania</span></div>
+                <div class="subtitle">AI-Powered Startup Intelligence</div>
+            </div>
+        </div>
+        <div class="powered-by">
+            Powered by <a href="https://launchub.com" target="_blank" rel="noopener">LAUNCHub Ventures</a>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-top">
+                <img src="tuf-logo.png" alt="" class="hero-logo" role="presentation">
+                <div class="hero-titles">
+                    <div class="hero-label">Todor Ultra Fast</div>
+                    <h1 class="hero-title">Romanian Startup Ecosystem</h1>
+                    <p class="hero-subtitle">Comprehensive founder and company intelligence for Romania</p>
+                </div>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="companyCount">0</div>
+                    <div class="stat-label">Product Companies</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="founderCount">0</div>
+                    <div class="stat-label">Founders Analyzed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="avgScore">0</div>
+                    <div class="stat-label">Avg. Score</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="topScore">0</div>
+                    <div class="stat-label">Top Score</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <nav class="tab-container">
+        <div class="tabs" role="tablist">
+            <button class="tab active" role="tab" aria-selected="true" data-tab="companies" data-umami-event="Tab: Romanian Companies">
+                Romanian Product Companies
+                <span class="tab-count" id="companiesCount">0</span>
+            </button>
+            <button class="tab" role="tab" aria-selected="false" data-tab="harmonic" data-umami-event="Tab: Harmonic Founders">
+                Harmonic Founder Ratings
+                <span class="tab-count" id="harmonicCount">0</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="grid-controls">
+            <h2 class="grid-title" id="gridTitle">Romanian Product Companies</h2>
+            <input type="text" class="search-box" id="searchBox" placeholder="Search companies..." aria-label="Search">
+        </div>
+        <div class="grid-wrapper">
+            <div id="dataGrid" class="ag-theme-alpine"></div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p class="footer-text">Data sourced from LinkedIn Sales Navigator and Harmonic</p>
+            <p class="footer-text">Powered by <a href="https://launchub.com" target="_blank" rel="noopener">LAUNCHub Ventures</a></p>
+            <div class="tuf-badge">
+                <img src="tuf-logo.png" alt="">
+                Built with Todor Ultra Fast
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let gridApi;
+        let companiesData = [];
+        let harmonicData = [];
+        let currentTab = 'companies';
+
+        // Score cell renderer
+        function scoreCellRenderer(params) {
+            if (params.value === null || params.value === undefined) {
+                return '<span class="score-na">&mdash;</span>';
+            }
+            const score = params.value;
+            let className = 'score-low';
+            if (score >= 7) className = 'score-high';
+            else if (score >= 5) className = 'score-medium';
+            return `<span class="score-badge ${className}">${score.toFixed(1)}</span>`;
+        }
+
+        // Integer score renderer
+        function intScoreCellRenderer(params) {
+            if (params.value === null || params.value === undefined) {
+                return '<span class="score-na">&mdash;</span>';
+            }
+            const score = params.value;
+            let className = 'score-low';
+            if (score >= 7) className = 'score-high';
+            else if (score >= 5) className = 'score-medium';
+            return `<span class="score-badge ${className}">${score}</span>`;
+        }
+
+        // Link cell renderer with Umami tracking
+        function linkCellRenderer(params) {
+            if (!params.value) return '<span class="score-na">&mdash;</span>';
+            const url = params.value;
+            const isLinkedIn = url.includes('linkedin.com');
+            const displayText = isLinkedIn ? 'LinkedIn' : 'Website';
+            const eventName = isLinkedIn ? 'Click: LinkedIn Profile' : 'Click: Company Website';
+            const entityName = params.data.company_name || params.data.founder_name || params.data.full_name || '';
+            const safeEntity = entityName.replace(/"/g, '&quot;');
+            return `<span class="link-cell"><a href="${url}" target="_blank" rel="noopener" data-umami-event="${eventName}" data-umami-event-name="${safeEntity}">${displayText} &nearr;</a></span>`;
+        }
+
+        // Get responsive breakpoint
+        function getBreakpoint() {
+            const w = window.innerWidth;
+            if (w <= 640) return 'mobile';
+            if (w <= 1024) return 'tablet';
+            return 'desktop';
+        }
+
+        // Column definitions for Romanian Companies
+        function getCompanyColumns() {
+            const bp = getBreakpoint();
+            const isMobile = bp === 'mobile';
+
+            return [
+                { field: 'company_name', headerName: 'Company', flex: 2, minWidth: 150 },
+                { field: 'founder_name', headerName: 'Founder', flex: 1.5, minWidth: 120, hide: isMobile },
+                { field: 'company_website', headerName: 'Website', flex: 1, minWidth: 100, cellRenderer: linkCellRenderer, hide: isMobile },
+                { field: 'person_linkedin_url', headerName: 'LinkedIn', flex: 1, minWidth: 100, cellRenderer: linkCellRenderer },
+                { field: 'founder_score', headerName: 'Founder', width: 90, cellRenderer: intScoreCellRenderer },
+                { field: 'product_score', headerName: 'Product', width: 90, cellRenderer: intScoreCellRenderer, hide: isMobile },
+                { field: 'market_opportunity_score', headerName: 'Market', width: 90, cellRenderer: intScoreCellRenderer, hide: isMobile },
+                { field: 'overall_weighted_score', headerName: 'Overall', width: 90, cellRenderer: scoreCellRenderer, sort: 'desc' }
+            ];
+        }
+
+        // Column definitions for Harmonic Founders
+        function getHarmonicColumns() {
+            const bp = getBreakpoint();
+            const isMobile = bp === 'mobile';
+
+            return [
+                { field: 'full_name', headerName: 'Founder Name', flex: 1.5, minWidth: 150 },
+                { field: 'linkedin_url', headerName: 'LinkedIn', flex: 1, minWidth: 100, cellRenderer: linkCellRenderer },
+                { field: 'education', headerName: 'Education', flex: 2, minWidth: 200, hide: isMobile },
+                { field: 'founder_score', headerName: 'Founder Score', width: 120, cellRenderer: intScoreCellRenderer, sort: 'desc' }
+            ];
+        }
+
+        // Update stats display
+        function updateStats(companies, harmonic) {
+            const totalFounders = companies.length + harmonic.length;
+            document.getElementById('companyCount').textContent = companies.length;
+            document.getElementById('founderCount').textContent = totalFounders;
+            document.getElementById('companiesCount').textContent = companies.length;
+            document.getElementById('harmonicCount').textContent = harmonic.length;
+
+            if (companies.length > 0) {
+                const scores = companies.map(c => c.overall_weighted_score).filter(s => s !== null);
+                if (scores.length > 0) {
+                    const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
+                    const max = Math.max(...scores);
+                    document.getElementById('avgScore').textContent = avg.toFixed(1);
+                    document.getElementById('topScore').textContent = max.toFixed(1);
+                }
+            }
+        }
+
+        // Switch tabs
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => {
+                t.classList.remove('active');
+                t.setAttribute('aria-selected', 'false');
+            });
+            const activeTab = document.querySelector(`[data-tab="${tab}"]`);
+            activeTab.classList.add('active');
+            activeTab.setAttribute('aria-selected', 'true');
+
+            const titles = {
+                'companies': 'Romanian Product Companies',
+                'harmonic': 'Harmonic Founder Ratings'
+            };
+            document.getElementById('gridTitle').textContent = titles[tab];
+            document.getElementById('searchBox').placeholder = tab === 'harmonic' ? 'Search founders...' : 'Search companies...';
+
+            let data, columns;
+            if (tab === 'companies') {
+                data = companiesData;
+                columns = getCompanyColumns();
+            } else {
+                data = harmonicData;
+                columns = getHarmonicColumns();
+            }
+
+            gridApi.setGridOption('columnDefs', columns);
+            gridApi.setGridOption('rowData', data);
+            gridApi.setGridOption('quickFilterText', '');
+            document.getElementById('searchBox').value = '';
+        }
+
+        // Handle resize
+        function handleResize() {
+            if (gridApi) {
+                const columns = currentTab === 'companies' ? getCompanyColumns() : getHarmonicColumns();
+                gridApi.setGridOption('columnDefs', columns);
+            }
+        }
+
+        // Initialize
+        async function init() {
+            try {
+                const [companiesRes, harmonicRes] = await Promise.all([
+                    fetch('romanian_companies.json'),
+                    fetch('harmonic_founders.json')
+                ]);
+
+                companiesData = await companiesRes.json();
+                harmonicData = await harmonicRes.json();
+
+                updateStats(companiesData, harmonicData);
+
+                const gridOptions = {
+                    columnDefs: getCompanyColumns(),
+                    rowData: companiesData,
+                    defaultColDef: {
+                        sortable: true,
+                        resizable: true,
+                        filter: true
+                    },
+                    animateRows: true,
+                    pagination: true,
+                    paginationPageSize: 50,
+                    domLayout: 'normal'
+                };
+
+                const gridDiv = document.getElementById('dataGrid');
+                gridApi = agGrid.createGrid(gridDiv, gridOptions);
+
+                // Tab click handlers
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+                    tab.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            switchTab(tab.dataset.tab);
+                        }
+                    });
+                });
+
+                // Search handler
+                document.getElementById('searchBox').addEventListener('input', (e) => {
+                    gridApi.setGridOption('quickFilterText', e.target.value);
+                });
+
+                // Resize handler
+                window.addEventListener('resize', handleResize);
+
+            } catch (error) {
+                console.error('Error loading data:', error);
+                document.getElementById('gridTitle').textContent = 'Error loading data. Please refresh the page.';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
